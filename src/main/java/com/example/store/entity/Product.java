@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -43,6 +44,8 @@ public class Product {
                 ", type='" + type + '\'' +
                 ", create_time='" + create_time + '\'' +
                 ", state='" + state + '\'' +
+                ", image=" + Arrays.toString(image) +
+                ", imageList=" + imageList +
                 '}';
     }
 }

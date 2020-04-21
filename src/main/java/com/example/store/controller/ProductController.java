@@ -52,7 +52,7 @@ public class ProductController {
     @ResponseBody
     @RequestMapping("/updateProduct")
     public Map<String, Object> updateProduct(@RequestHeader("X-Token")String XToken, Product product) {
-        log.info("selectUser()XToken:" + XToken);
+        log.info("updateProduct()XToken:" + XToken);
         log.info("updateProduct()product:" + product.toString());
         Map<String, Object> map = Maps.newHashMap();
         if(XToken.equals(WebConstant.X_TOKEN)){

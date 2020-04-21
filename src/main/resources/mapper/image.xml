@@ -23,7 +23,7 @@
     <update id="updateImage">
         update tb_images
         set
-        `product_id` = #{product_id},
+        `product_id` = #{product_id}
         where `id` = #{id}
     </update>
 
@@ -40,7 +40,8 @@
         `id`,
         `name`,
         `url`,
-        `product_id`
+        `product_id`,
+        `create_time`
         from tb_images
         where `delete_state` = 1 and `product_id` = #{product_id}
     </select>
@@ -49,7 +50,8 @@
         `id`,
         `name`,
         `url`,
-        `product_id`
+        `product_id`,
+        `create_time`
         from tb_images
         where `delete_state` = 1
         <if test="id!=null and id!='' and id!=0">
