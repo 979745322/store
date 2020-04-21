@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.store.dao.ProductMapper">
+
+    <resultMap id="product" type="com.example.store.entity.Product">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="commission" property="commission"/>
+        <result column="commission" property="commission"/>
+        <result column="introduction" property="introduction"/>
+        <result column="solid" property="solid"/>
+        <result column="shop_id" property="shop_id"/>
+        <result column="inventory" property="inventory"/>
+        <result column="old_price" property="old_price"/>
+        <result column="delete_state" property="delete_state"/>
+        <result column="tag" property="tag"/>
+        <result column="type" property="type"/>
+        <result column="create_time" property="create_time"/>
+        <result column="state" property="state"/>
+    </resultMap>
+
+    <!-- 新增商品 -->
+    <insert id="addProduct" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        tb_products(`name`,`commission`,`price`,`introduction`,`solid`,`shop_id`,`inventory`,`old_price`,`delete_state`,`tag`,`type`,`create_time`,`state`)
+        values(#{name},#{commission},#{price},#{introduction},#{solid},#{shop_id},#{inventory},#{old_price},"1",#{tag},#{type},now(),#{state})
+    </insert>
+
+    <!--  修改商品  -->
+    <update id="updateProduct">
+        update tb_products
+        set
+        `name` = #{name},
+        `commission` = #{commission},
+        `price` = #{price},
+        `introduction` = #{introduction},
+        `solid` = #{solid},
+        `shop_id` = #{shop_id},
+        `inventory` = #{inventory},
+        `old_price` = #{old_price},
+        `tag` = #{tag},
+        `type` = #{type},
+        `state` = #{state}
+        where `id` = #{id}
+    </update>
+
+    <!--  删除商品  -->
+    <update id="deleteProduct">
+        update tb_products
+        set
+        `delete_state` = 0
+        where `id` = #{id}
+    </update>
+
+    <select id="selectProjectById" resultMap="product">
+        select
+        `id`,
+        `name`,
+        `commission`,
+        `price`,
+        `introduction`,
+        `solid`,
+        `shop_id`,
+        `inventory`,
+        `old_price`,
+        `tag`,
+        `type`,
+        `state`
+        from tb_products
+        where `delete_state` = 1 and `id` = #{id}
+    </select>
+    <select id="productQueryPage" resultMap="product">
+        select
+        `id`,
+        `name`,
+        `commission`,
+        `price`,
+        `introduction`,
+        `solid`,
+        `shop_id`,
+        `inventory`,
+        `old_price`,
+        `tag`,
+        `type`,
+        `state`
+        from tb_products
+        where `delete_state` = 1
+        <if test="id!=null and id!='' and id!=0">
+            and `id` = #{id}
+        </if>
+        <if test="state!=null and state!='' and state!=0">
+            and `state` = #{state}
+        </if>
+        <if test="shop_id!=null and shop_id!='' and shop_id!=0">
+            and `shop_id` = #{shop_id}
+        </if>
+        <if test="name!=null and name!=''">
+            and `name` like concat('%',#{name},'%')
+        </if>
+        <if test="tag!=null and tag!=''">
+            and `tag` like concat('%',#{tag},'%')
+        </if>
+        <if test="type!=null and type!=''">
+            and `type` like concat('%',#{type},'%')
+        </if>
+        <if test="introduction!=null and introduction!=''">
+            and `introduction` like concat('%',#{introduction},'%')
+        </if>
+        <if test="commission!=null and commission!='' and commission!=0">
+            and `commission` = #{commission}
+        </if>
+        <if test="price!=null and price!='' and price!=0">
+            and `price` = #{price}
+        </if>
+        <if test="solid!=null and solid!='' and solid!=0">
+            and `solid` = #{solid}
+        </if>
+        <if test="inventory!=null and inventory!='' and inventory!=0">
+            and `inventory` = #{inventory}
+        </if>
+        <if test="old_price!=null and old_price!='' and old_price!=0">
+            and `old_price` = #{old_price}
+        </if>
+        <if test="startTime!=null and startTime!=''">
+            and `create_time` &gt; #{startTime}
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            and `create_time` &lt; #{endTime}
+        </if>
+
+        ORDER BY `create_time` ASC
+    </select>
+
+</mapper>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.store.dao.LocationMapper">
+
+    <resultMap id="location" type="com.example.store.entity.Location">
+        <result column="id" property="id"/>
+        <result column="user_id" property="user_id"/>
+        <result column="save_date" property="save_date"/>
+        <result column="location_default" property="location_default"/>
+        <result column="name" property="name"/>
+        <result column="tel" property="tel"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="region" property="region"/>
+        <result column="address" property="address"/>
+    </resultMap>
+
+    <!-- 新增地址 -->
+    <insert id="addLocation">
+        insert into
+        tb_location(`user_id`,`save_date`,`location_default`,`name`,`tel`,`province`,`city`,`region`,`address`)
+        values(#{user_id},now(),#{location_default},#{name},#{tel},#{province},#{city},#{region},#{address})
+    </insert>
+
+    <!--  修改地址  -->
+    <update id="updateLocation">
+        update tb_location
+        set
+        `save_date` = #{save_date},
+        `location_default` = #{location_default},
+        `name` = #{name},
+        `tel` = #{tel},
+        `province` = #{province},
+        `city` = #{city},
+        `region` = #{region},
+        `address` = #{address}
+        where `id` = #{id}
+    </update>
+
+    <!--  删除地址  -->
+    <delete id="deleteLocation">
+        delete from tb_location
+        where id = #{id}
+    </delete>
+
+
+    <select id="selectLocationById" resultMap="location">
+        select
+        `id`,
+        `user_id`,
+        `save_date`,
+        `location_default`,
+        `name`,
+        `tel`,
+        `province`,
+        `city`,
+        `region`,
+        `address`
+        from tb_location
+        where `id` = #{id}
+    </select>
+    <select id="locationQueryPage" resultMap="location">
+        select
+        `id`,
+        `user_id`,
+        `save_date`,
+        `location_default`,
+        `name`,
+        `tel`,
+        `province`,
+        `city`,
+        `region`,
+        `address`
+        from tb_location
+        where true
+        <if test="id!=null and id!='' and id!=0">
+            and `id` = #{id}
+        </if>
+        <if test="user_id!=null and user_id!='' and user_id!=0">
+            and `user_id` = #{user_id}
+        </if>
+        <if test="location_default!=null and location_default!=''">
+            and `location_default` = #{location_default}
+        </if>
+        <if test="name!=null and name!=''">
+            and `name` like concat('%',#{name},'%')
+        </if>
+        <if test="tel!=null and tel!=''">
+            and `tel` like concat('%',#{tel},'%')
+        </if>
+        <if test="province!=null and province!=''">
+            and `introduction` like concat('%',#{province},'%')
+        </if>
+        <if test="city!=null and city!=''">
+            and `city` like concat('%',#{city},'%')
+        </if>
+        <if test="region!=null and region!=''">
+            and `region` like concat('%',#{region},'%')
+        </if>
+        <if test="address!=null and address!=''">
+            and `address` like concat('%',#{address},'%')
+        </if>
+        <if test="startTime!=null and startTime!=''">
+            and `save_date` &gt; #{startTime}
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            and `save_date` &lt; #{endTime}
+        </if>
+    </select>
+
+</mapper>

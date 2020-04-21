@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.store.dao.UserMapper">
+    <resultMap id="user" type="com.example.store.entity.User">
+        <result column="id" property="id"/>
+        <result column="wechat_id" property="wechat_id"/>
+        <result column="tel" property="tel"/>
+        <result column="commission" property="commission"/>
+        <result column="create_time" property="create_time"/>
+        <result column="state" property="state"/>
+        <result column="delete_state" property="delete_state"/>
+    </resultMap>
+    <resultMap id="admin" type="com.example.store.entity.Admin">
+        <result column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="token" property="token"/>
+    </resultMap>
+    <resultMap id="roles" type="com.example.store.entity.Roles">
+        <result column="id" property="id"/>
+        <result column="avatar" property="avatar"/>
+        <result column="name" property="name"/>
+        <result column="roles" property="roles"/>
+        <result column="introduction" property="introduction"/>
+    </resultMap>
+
+    <select id="login" resultType="string">
+        select
+        token
+        from tb_admin
+        where `username` = #{username} and `password` = #{password}
+    </select>
+
+    <select id="selectRolesByToken" resultMap="roles">
+        select
+        roles.id,
+        roles.avatar,
+        roles.name,
+        roles.roles,
+        roles.introduction
+        from tb_roles as roles
+        where roles.id in (select token.roles_id from tb_token as token where token.token = #{token} )
+    </select>
+
+    <!-- 新增用户 -->
+    <insert id="addUser">
+        insert into
+        tb_users(`wechat_id`,`tel`,`commission`,`create_time`,`state`,`delete_state`)
+        values(#{wechat_id},#{tel},#{commission},now(),#{state},"1")
+    </insert>
+
+    <!--  修改用户  -->
+    <update id="updateUser">
+        update tb_users
+        set
+        `wechat_id` = #{wechat_id},
+        `tel` = #{tel},
+        `commission` = #{commission},
+        `state` = #{state}
+        where `id` = #{id}
+    </update>
+
+    <!--  删除用户  -->
+    <update id="deleteUser">
+        update tb_users
+        set
+        `delete_state` = 0
+        where `id` = #{id}
+    </update>
+
+    <select id="userQueryPage" resultMap="user">
+        select
+        `id`,
+        `wechat_id`,
+        `tel`,
+        `commission`,
+        `create_time`,
+        `state`
+        from tb_users
+        where `delete_state` = 1
+        <if test="id!=null and id!='' and id!=0">
+            and `id` = #{id}
+        </if>
+        <if test="wechat_id!=null and wechat_id!=''">
+            and `wechat_id` like concat('%',#{wechat_id},'%')
+        </if>
+        <if test="state!=null and state!=''">
+            and `state` = #{state}
+        </if>
+        <if test="tel!=null and tel!=''">
+            and `tel` like concat('%',#{tel},'%')
+        </if>
+        <if test="commission!=null and commission!='' and commission!=0">
+            and `commission` = #{commission}
+        </if>
+        <if test="startTime!=null and startTime!=''">
+            and `create_time` &gt; #{startTime}
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            and `create_time` &lt; #{endTime}
+        </if>
+        ORDER BY `create_time` ASC
+    </select>
+
+    <select id="selectUserById" resultMap="user">
+        select
+        `id`,
+        `wechat_id`,
+        `tel`,
+        `commission`,
+        `create_time`,
+        `state`
+        from tb_users
+        where `delete_state` = 1
+        and `id` = #{id}
+    </select>
+
+</mapper>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.store.dao.OrderMapper">
+
+    <resultMap id="order" type="com.example.store.entity.Order">
+        <result column="id" property="id"/>
+        <result column="user_id" property="user_id"/>
+        <result column="order_id" property="order_id"/>
+        <result column="promoter" property="promoter"/>
+        <result column="commission" property="commission"/>
+        <result column="num" property="num"/>
+        <result column="total_price" property="total_price"/>
+        <result column="product_id" property="product_id"/>
+        <result column="location_id" property="location_id"/>
+        <result column="create_time" property="create_time"/>
+        <result column="state" property="state"/>
+        <result column="delete_state" property="delete_state"/>
+    </resultMap>
+
+    <!-- 新增订单 -->
+    <insert id="addOrder">
+        insert into
+        tb_order(`user_id`,`order_id`,`promoter`,`commission`,`num`,`total_price`,`product_id`,`location_id`,`create_time`,`state`,`delete_state`)
+        values(#{user_id},#{order_id},#{promoter},#{commission},#{num},#{total_price},#{product_id},#{location_id},now(),#{state},"1")
+    </insert>
+
+    <!--  修改订单  -->
+    <update id="updateOrder">
+        update tb_order
+        set
+        <if test="order_id!=null and order_id!='' and id!='null'">
+            `order_id` = #{order_id},
+        </if>
+        <if test="promoter!=null and promoter!='' and promoter!='null'">
+            `promoter` = #{promoter},
+        </if>
+        <if test="commission!=null and commission!='' and commission!=0">
+            `commission` = #{commission},
+        </if>
+        <if test="num!=null and num!='' and num!=0">
+            `num` = #{num},
+        </if>
+        <if test="total_price!=null and total_price!='' and total_price!=0">
+            `total_price` = #{total_price},
+        </if>
+        <if test="product_id!=null and product_id!='' and product_id!=0">
+            `product_id` = #{product_id},
+        </if>
+        <if test="location_id!=null and location_id!='' and location_id!=0">
+            `location_id` = #{location_id},
+        </if>
+        <if test="state!=null and state!='' and state!='null'">
+            `state` = #{state},
+        </if>
+        `delete_state` = '1'
+        where `id` = #{id}
+    </update>
+
+    <!--  删除订单  -->
+    <update id="deleteOrder">
+        update tb_order
+        set
+        `delete_state` = 0
+        where `id` = #{id}
+    </update>
+
+    <select id="orderQueryPage" resultMap="order">
+        select
+        `id`,
+        `user_id`,
+        `order_id`,
+        `promoter`,
+        `commission`,
+        `num`,
+        `total_price`,
+        `product_id`,
+        `location_id`,
+        `state`
+        from tb_order
+        where `delete_state` = 1
+        <if test="id!=null and id!='' and id!=0">
+            and `id` = #{id}
+        </if>
+        <if test="user_id!=null and user_id!='' and user_id!=0">
+            and `user_id` = #{user_id}
+        </if>
+        <if test="product_id!=null and product_id!='' and product_id!=0">
+            and `product_id` = #{product_id}
+        </if>
+        <if test="location_id!=null and location_id!='' and location_id!=0">
+            and `location_id` = #{location_id}
+        </if>
+        <if test="commission!=null and commission!=''">
+            and `commission` = #{commission}
+        </if>
+        <if test="num!=null and num!=''">
+            and `num` = #{num}
+        </if>
+        <if test="total_price!=null and total_price!=''">
+            and `total_price` = #{total_price}
+        </if>
+        <if test="state!=null and state!=''">
+            and `state` = #{state}
+        </if>
+        <if test="promoter!=null and promoter!=''">
+            and `name` like concat('%',#{name},'%')
+        </if>
+        <if test="order_id!=null and order_id!=''">
+            and `order_id` like concat('%',#{order_id},'%')
+        </if>
+        <if test="startTime!=null and startTime!=''">
+            and `create_time` &gt; #{startTime}
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            and `create_time` &lt; #{endTime}
+        </if>
+    </select>
+
+</mapper>

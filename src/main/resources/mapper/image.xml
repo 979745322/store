@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.store.dao.ImageMapper">
+
+    <resultMap id="image" type="com.example.store.entity.Image">
+        <result column="id" property="id"/>
+        <result column="url" property="url"/>
+        <result column="name" property="name"/>
+        <result column="product_id" property="product_id"/>
+        <result column="create_time" property="create_time"/>
+        <result column="delete_state" property="delete_state"/>
+    </resultMap>
+
+    <!-- 新增图片 -->
+    <insert id="addImage" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        tb_images(`name`,`url`,`product_id`,`create_time`,`delete_state`)
+        values(#{name},#{url},#{product_id},now(),"1")
+    </insert>
+
+    <!--  修改图片  -->
+    <update id="updateImage">
+        update tb_images
+        set
+        `product_id` = #{product_id},
+        where `id` = #{id}
+    </update>
+
+    <!--  删除图片  -->
+    <update id="deleteImage">
+        update tb_images
+        set
+        `delete_state` = 0
+        where `id` = #{id}
+    </update>
+
+    <select id="selectImageByProjectId" resultMap="image">
+        select
+        `id`,
+        `name`,
+        `url`,
+        `product_id`
+        from tb_images
+        where `delete_state` = 1 and `product_id` = #{product_id}
+    </select>
+    <select id="imageQueryPage" resultMap="image">
+        select
+        `id`,
+        `name`,
+        `url`,
+        `product_id`
+        from tb_images
+        where `delete_state` = 1
+        <if test="id!=null and id!='' and id!=0">
+            and `id` = #{id}
+        </if>
+        <if test="product_id!=null and product_id!='' and product_id!=0">
+            and `product_id` = #{product_id}
+        </if>
+        <if test="name!=null and name!=''">
+            and `name` like concat('%',#{name},'%')
+        </if>
+        <if test="url!=null and url!=''">
+            and `url` like concat('%',#{url},'%')
+        </if>
+        <if test="startTime!=null and startTime!=''">
+            and `create_time` &gt; #{startTime}
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            and `create_time` &lt; #{endTime}
+        </if>
+    </select>
+
+</mapper>
